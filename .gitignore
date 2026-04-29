@@ -1,0 +1,6 @@
+# Keep these directories
+!backend/
+!frontend/
+!data/
+!nginx/
+
