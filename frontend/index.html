@@ -1,0 +1,71 @@
+<!doctype html>
+<html lang="vi">
+<head>
+  <meta charset="utf-8" />
+  <title>RAG Q&A N?i b?</title>
+  <style>
+    body { font-family: "Segoe UI", sans-serif; margin: 24px; background: #f4f7fb; color: #1f2937; }
+    h1 { margin-bottom: 8px; }
+    textarea { width: 100%; height: 120px; font-size: 16px; padding: 12px; border-radius: 8px; border: 1px solid #cbd5e1; resize: vertical; }
+    button { margin-top: 12px; padding: 12px 20px; font-size: 16px; border: none; background: #2563eb; color: white; border-radius: 8px; cursor: pointer; }
+    button:disabled { background: #94a3b8; cursor: default; }
+    .card { background: white; border-radius: 12px; padding: 18px; box-shadow: 0 8px 24px rgba(15, 23, 42, 0.08); margin-top: 18px; }
+    pre { white-space: pre-wrap; word-wrap: break-word; font-size: 15px; }
+    .sources { margin-top: 12px; color: #334155; }
+    .source-item { margin-bottom: 4px; }
+  </style>
+</head>
+<body>
+  <h1>RAG Q&A N?i b?</h1>
+  <p>Nh?p câu h?i v? tài li?u n?i b? và nh?n ph?n h?i nhanh.</p>
+  <textarea id="question" placeholder="Ví d?: Quy trình phê duy?t chi tiêu n?i b? là gì?"></textarea>
+  <button id="ask">G?i câu h?i</button>
+
+  <div class="card" id="responseCard" style="display:none;">
+    <h2>Tr? l?i</h2>
+    <pre id="answer"></pre>
+    <div class="sources" id="sources"></div>
+  </div>
+
+  <script>
+    const backendUrl = "http://localhost:8000";
+    const button = document.getElementById("ask");
+    const textarea = document.getElementById("question");
+    const responseCard = document.getElementById("responseCard");
+    const answerEl = document.getElementById("answer");
+    const sourcesEl = document.getElementById("sources");
+
+    button.addEventListener("click", async () => {
+      const question = textarea.value.trim();
+      if (!question) return;
+      button.disabled = true;
+      button.textContent = "Ðang x? lý...";
+      responseCard.style.display = "none";
+
+      try {
+        const response = await fetch(`${backendUrl}/query`, {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ question }),
+        });
+        if (!response.ok) {
+          const error = await response.json();
+          throw new Error(error.detail || "L?i khi truy v?n backend.");
+        }
+        const data = await response.json();
+        answerEl.textContent = data.answer;
+        sourcesEl.innerHTML = data.sources.length
+          ? `<strong>Ngu?n:</strong><br>${data.sources.map(src => `<div class="source-item">• ${src}</div>`).join("")}`
+          : "<strong>Ngu?n:</strong> Không có thông tin ngu?n.";
+        responseCard.style.display = "block";
+      } catch (err) {
+        answerEl.textContent = err.message;
+        responseCard.style.display = "block";
+      } finally {
+        button.disabled = false;
+        button.textContent = "G?i câu h?i";
+      }
+    });
+  </script>
+</body>
+</html>
