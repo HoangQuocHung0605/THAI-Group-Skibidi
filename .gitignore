@@ -3,4 +3,4 @@
 !frontend/
 !data/
 !nginx/
-
+data/postgres/
