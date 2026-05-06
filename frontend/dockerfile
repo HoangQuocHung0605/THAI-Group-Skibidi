@@ -1,0 +1,14 @@
+# Sử dụng Node image
+FROM node:18-alpine
+
+WORKDIR /app
+
+# Cài đặt dependencies
+COPY package*.json ./
+RUN npm install
+
+# Copy source code
+COPY . .
+
+# Build ứng dụng (nếu cần) hoặc chạy trực tiếp
+CMD ["npm", "run", "dev"]
