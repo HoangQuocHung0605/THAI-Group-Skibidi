@@ -1,22 +1,9 @@
-import json
-from app.database import SessionLocal
-from app.models.message import Message
-from ai_engine.rag_chain import ask_ai 
+# Chat service
+# HIEC viet lai Chat service logic
+class ChatService:
+    def __init__(self):
+        pass
 
-def chat_service(question: str):
-    # Gọi hàm AI đã sửa ở trên
-    answer, sources = ask_ai(question)
-    
-    with SessionLocal() as db:
-        # Lưu vào Postgres
-        db_msg = Message(
-            question=question,
-            answer=answer,
-            # Chuyển list sources thành string JSON để lưu vào cột Text
-            sources=json.dumps(sources) 
-        )
-        db.add(db_msg)
-        db.commit()
-        db.refresh(db_msg)
-        
-    return {"answer": answer, "sources": sources}
+    def process_message(self, question: str):
+        # Process question and return answer
+        pass

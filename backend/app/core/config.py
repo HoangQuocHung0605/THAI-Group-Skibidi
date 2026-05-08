@@ -1,9 +1,16 @@
+# Configuration module
+# HIEC viet lai Config
 from pydantic_settings import BaseSettings
 
+
 class Settings(BaseSettings):
-    # Kết nối Postgres (Lưu tại data/postgres)
-    DATABASE_URL: str = "postgresql://user:password@db:5432/rag_db"
-    # Kết nối Redis cho Background Task & Cache
-    REDIS_URL: str = "redis://redis:6379/0"
-    
+    DATABASE_URL: str = "postgresql://postgres:postgres@localhost:5432/rag_db"
+    REDIS_URL: str = "redis://localhost:6379"
+    QDRANT_URL: str = "http://localhost:6333"
+    OPENAI_API_KEY: str = ""
+
+    class Config:
+        env_file = ".env"
+
+
 settings = Settings()

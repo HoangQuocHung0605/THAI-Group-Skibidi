@@ -1,0 +1,13 @@
+Noi dung mau cho du an RAG noi bo.
+
+Day la tai lieu vi du de tho nghiem he thong hoi dap noi bo cua cong ty.
+
+Chinh sach phe duyet chi tieu:
+- Moi de xuat chi tieu duoi 10 trieu dong duoc truong bo phan duyet.
+- Chi tieu tu 10 trieu dong den 50 trieu dong can Giam doc phe duyet.
+- Chi tieu tren 50 trieu dong phai co hoi dong xet duyet.
+
+Quy trinh tuyen dung:
+- Tuyen dung se bat dau khi truong phong phe duyet.
+- Ho so ung vien duoc gui den HR de sang loc.
+- Phong van ky thuat boi truong nhom, phong van cuoi boi Giam doc.
