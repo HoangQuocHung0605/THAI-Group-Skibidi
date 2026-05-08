@@ -39,7 +39,7 @@ services:
   backend:
     build:
       context: ./backend
-      dockerfile: Dockerfile
+      dockerfile: dockerfile
     ports:
       - "8000:8000"
     environment:
@@ -61,7 +61,9 @@ services:
   frontend:
     build:
       context: ./frontend
-      dockerfile: Dockerfile
+      dockerfile: dockerfile
+      args:
+        REACT_APP_API_URL: ""
     ports:
       - "3000:80"
     depends_on:
