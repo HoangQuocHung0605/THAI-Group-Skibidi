@@ -1,7 +1,7 @@
 from fastapi import FastAPI
 from app.api.chat import router as chat_router
 from app.api.history import router as history_router
-from app.database import engine, Base
+from app.core.database import engine, Base
 from app.models.message import Message  # Import này để Base biết bảng Message mà tạo
 
 # Lệnh này giúp tự động tạo bảng 'messages' trong Postgres nếu chưa có
