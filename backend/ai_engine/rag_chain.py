@@ -1,6 +1,6 @@
 # RAG Chain module
 # HIEP viet lai RAG Chain logic
-from langchain_openai import ChatOpenAI
+from langchain_google_genai import ChatGoogleGenerativeAI
 from langchain.chains import RetrievalQA
 from langchain.prompts import PromptTemplate
 
@@ -24,19 +24,29 @@ def ask_ai(question: str) -> tuple:
     """
     Trả về 2 giá trị: 1 chuỗi (answer) và 1 danh sách (sources)
     """
-    # Check if API key is configured
-    if not settings.OPENAI_API_KEY or settings.OPENAI_API_KEY.startswith("sk-placeholder"):
-        return f"Demo response: {question}", []
+    # Check if Google API key is configured
+    if not settings.GOOGLE_API_KEY:
+        # Check fallback to OpenAI
+        if not settings.OPENAI_API_KEY or settings.OPENAI_API_KEY.startswith("sk-placeholder"):
+            return f"Demo response: {question}", []
     
     try:
         vdb = VectorDB()
         retriever = vdb.as_retriever()
 
-        llm = ChatOpenAI(
-            api_key=settings.OPENAI_API_KEY,
-            model=settings.OPENAI_MODEL,
-            temperature=0,
-        )
+        if settings.GOOGLE_API_KEY:
+            llm = ChatGoogleGenerativeAI(
+                google_api_key=settings.GOOGLE_API_KEY,
+                model=settings.GEMINI_MODEL,
+                temperature=0,
+            )
+        else:
+            from langchain_openai import ChatOpenAI
+            llm = ChatOpenAI(
+                api_key=settings.OPENAI_API_KEY,
+                model=settings.OPENAI_MODEL,
+                temperature=0,
+            )
 
         prompt = PromptTemplate(
             template=PROMPT_TEMPLATE,

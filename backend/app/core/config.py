@@ -27,6 +27,11 @@ class Settings(BaseSettings):
     OPENAI_API_KEY: str = ""
     OPENAI_MODEL: str = "gpt-3.5-turbo"
     EMBEDDING_MODEL: str = "text-embedding-3-small"
+
+    # Google Gemini
+    GOOGLE_API_KEY: str = ""
+    GEMINI_MODEL: str = "gemini-flash-latest"
+    GOOGLE_EMBEDDING_MODEL: str = "models/gemini-embedding-001"
  
     class Config:
         env_file = ".env"
