@@ -38,10 +38,10 @@ function Chat() {
 
       // Lấy answer và sources từ response
       // Thử cả .answer và .message phòng backend đặt tên khác
-      const answer = response.data?.answer
-        || response.data?.message
-        || 'Không có phản hồi từ server';
+      const answer = response.data?.answer || 'Không có phản hồi từ server';
       const sources = response.data?.sources || [];
+      const sessionId = response.data?.session_id;
+      console.log('Session ID:', sessionId); // để debug
 
       // Thêm tin nhắn bot vào danh sách
       const botMessage = { role: 'bot', content: answer, sources };
