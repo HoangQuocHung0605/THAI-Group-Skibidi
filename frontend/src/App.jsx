@@ -13,7 +13,7 @@ function App() {
 
         <nav className="navbar">
           <div className="navbar-brand">
-            <img src="logo.jpg" alt="logo" className="brand-logo" />
+            <span className="brand-icon">🦊</span>
             <span className="brand-name">GitLab Handbook QA</span>
           </div>
           <div className="navbar-links">

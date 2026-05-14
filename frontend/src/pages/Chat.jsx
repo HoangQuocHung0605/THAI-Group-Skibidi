@@ -117,7 +117,7 @@ function Chat() {
 
             {/* Avatar user hoặc bot */}
             <div className="message-avatar">
-              {/* icon user hoặc bot */}
+              {message.role === 'user' ? '👤' : '🦊'}
             </div>
 
             <div className="message-body">
@@ -152,7 +152,7 @@ function Chat() {
         {loading && (
           <div className="message bot">
             <div className="message-avatar">
-              {/* icon bot */}
+              🦊
             </div>
             <div className="message-body">
               {/* 3 chấm nhảy */}
@@ -189,7 +189,10 @@ function Chat() {
           // Disable khi đang loading hoặc input trống
           disabled={loading || !input.trim()}
         >
-           <span style={{ fontSize: '32px', lineHeight: 1 }}>⬆</span>
+          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+            <line x1="22" y1="2" x2="11" y2="13"></line>
+            <polygon points="22 2 15 22 11 13 2 9 22 2"></polygon>
+          </svg>
         </button>
 
       </div>
