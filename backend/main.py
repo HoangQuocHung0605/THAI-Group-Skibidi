@@ -1,7 +1,29 @@
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
+from contextlib import asynccontextmanager
 
-app = FastAPI(title="RAG Solution - Backend")
+from app.api.chat import router as chat_router
+from app.api.history import router as history_router
+from app.api.ingest import router as ingest_router
+from app.core.database import engine, Base
+
+# Import models để Base biết bảng Message, User mà tạo
+from app.models.message import Message  # noqa: F401
+from app.models.user import User        # noqa: F401
+
+
+@asynccontextmanager
+async def lifespan(app: FastAPI):
+    # Tự động tạo bảng trong Postgres nếu chưa có
+    # Tránh lỗi "Relation does not exist"
+    Base.metadata.create_all(bind=engine)
+    yield
+
+
+app = FastAPI(
+    title="RAG Solution - Backend",
+    lifespan=lifespan,
+)
 
 app.add_middleware(
     CORSMiddleware,
@@ -11,28 +33,20 @@ app.add_middleware(
     allow_headers=["*"],
 )
 
+# Đăng ký các router
+app.include_router(chat_router)
+app.include_router(history_router)
+app.include_router(ingest_router)
+
 
 @app.get("/health")
 def health():
     return {"status": "ok"}
 
 
-@app.get("/api/chat")
-def chat_endpoint():
-    # HIEC Viet Lai API Chat
-    pass
-
-
-@app.post("/api/ingest")
-def ingest_endpoint():
-    # HIEC Viet Lai Ingest API
-    pass
-
-
-@app.get("/api/history")
-def history_endpoint():
-    # HIEC Viet Lai History API
-    pass
+@app.get("/")
+def root():
+    return {"message": "Backend RAG đang chạy ngon lành rồi nhé!"}
 
 
 if __name__ == "__main__":
