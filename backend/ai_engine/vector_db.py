@@ -1,83 +1,53 @@
-# Vector Database module
-# HIEP viet lai Vector DB integration
-from typing import List
-from langchain_community.vectorstores import Qdrant
-from langchain_google_genai import GoogleGenerativeAIEmbeddings
-from langchain.text_splitter import RecursiveCharacterTextSplitter
+import sys
+from pathlib import Path
+
+# Thêm thư mục gốc (THAI-Group-Skibidi) vào hệ thống tìm kiếm module
+root_path = str(Path(__file__).resolve().parent.parent.parent)
+if root_path not in sys.path:
+    sys.path.append(root_path)
+import os
+from pathlib import Path
 from qdrant_client import QdrantClient
-from qdrant_client.models import Distance, VectorParams
+from qdrant_client.http.models import Distance, VectorParams
+from langchain_qdrant import QdrantVectorStore
+from backend.ai_engine.embedding import get_embedding_model
 
-from app.core.config import settings
-
-
-class VectorDB:
+class VectorDBManager:
     def __init__(self):
-        self.client = QdrantClient(url=settings.QDRANT_URL)
-        if settings.GOOGLE_API_KEY:
-            self.embeddings = GoogleGenerativeAIEmbeddings(
-                google_api_key=settings.GOOGLE_API_KEY,
-                model=settings.GOOGLE_EMBEDDING_MODEL,
-            )
-        elif settings.OPENAI_API_KEY and not settings.OPENAI_API_KEY.startswith("sk-placeholder"):
-            # Fallback to OpenAI if needed, but the goal is Gemini
-            from langchain_openai import OpenAIEmbeddings
-            self.embeddings = OpenAIEmbeddings(
-                openai_api_key=settings.OPENAI_API_KEY,
-                model=settings.EMBEDDING_MODEL,
-            )
-        else:
-            self.embeddings = None
-        self.collection_name = settings.QDRANT_COLLECTION
+        # Xác định đường dẫn: backend/ai_engine/vector_db.py -> lên 2 cấp -> data/qdrant
+        base_dir = Path(__file__).resolve().parent.parent.parent
+        self.db_path = base_dir / "data" / "qdrant"
+        self.collection_name = "gitlab_handbook"
+        
+        # Khởi tạo embedding model từ file embeddings.py
+        self.embeddings = get_embedding_model()
+        
+        # Khởi tạo Qdrant Client (Local mode)
+        self.client = QdrantClient(path=str(self.db_path))
         self._ensure_collection()
 
     def _ensure_collection(self):
-        """Tạo collection nếu chưa có"""
-        existing = [c.name for c in self.client.get_collections().collections]
-        if self.collection_name not in existing:
+        """Tạo collection nếu chưa tồn tại"""
+        if not self.client.collection_exists(self.collection_name):
+            print(f"[*] Đang tạo mới collection: {self.collection_name}")
             self.client.create_collection(
                 collection_name=self.collection_name,
-                vectors_config=VectorParams(size=3072, distance=Distance.COSINE),
+                vectors_config=VectorParams(
+                    size=768, # Kích thước vector của Gemini là 768
+                    distance=Distance.COSINE
+                ),
             )
 
-    def add_documents(self, content: str, metadata: dict = {}) -> int:
-        """Chia nhỏ và đưa văn bản vào Qdrant, trả về số chunks"""
-        if not self.embeddings:
-            raise RuntimeError("Google API key not configured. Cannot add documents.")
-        splitter = RecursiveCharacterTextSplitter(
-            chunk_size=1000,
-            chunk_overlap=100,
-        )
-        chunks = splitter.split_text(content)
-
-        vectorstore = Qdrant(
+    def get_vector_store(self):
+        """Trả về instance QdrantVectorStore để dùng cho RAG chain"""
+        return QdrantVectorStore(
             client=self.client,
             collection_name=self.collection_name,
-            embeddings=self.embeddings,
+            embedding=self.embeddings,
         )
-        vectorstore.add_texts(
-            texts=chunks,
-            metadatas=[metadata] * len(chunks),
-        )
-        return len(chunks)
 
-    def as_retriever(self):
-        """Trả về retriever để RAG chain dùng"""
-        if not self.embeddings:
-            raise RuntimeError("OpenAI API key not configured. Cannot create retriever.")
-        vectorstore = Qdrant(
-            client=self.client,
-            collection_name=self.collection_name,
-            embeddings=self.embeddings,
-        )
-        return vectorstore.as_retriever(search_kwargs={"k": 4})
-
-    def embed_text(self, text: str) -> List[float]:
-        """Tạo embedding cho một đoạn text"""
-        if not self.embeddings:
-            raise RuntimeError("OpenAI API key not configured. Cannot embed text.")
-        return self.embeddings.embed_query(text)
-
-    def count(self) -> int:
-        """Trả về số lượng chunks trong collection"""
-        info = self.client.get_collection(self.collection_name)
-        return info.points_count
+    def add_documents(self, documents):
+        """Lưu danh sách Document vào Qdrant"""
+        vector_store = self.get_vector_store()
+        vector_store.add_documents(documents)
+        print(f"[+] Đã lưu {len(documents)} chunks vào Qdrant thành công.")
