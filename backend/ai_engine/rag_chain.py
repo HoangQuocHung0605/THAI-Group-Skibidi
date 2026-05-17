@@ -1,19 +1,14 @@
-from pathlib import Path
-import sys
-import os
-root_path = Path(__file__).resolve().parent.parent.parent
-sys.path.append(str(root_path))
 from langchain_google_genai import ChatGoogleGenerativeAI
 from langchain_core.prompts import ChatPromptTemplate
 from langchain_core.runnables import RunnablePassthrough
 from langchain_core.output_parsers import StrOutputParser
-from backend.ai_engine.vector_db import VectorDBManager
+from ai_engine.vector_db import VectorDBManager
 
 class RAGChain:
     def __init__(self):
         # 1. Khởi tạo LLM
         self.llm = ChatGoogleGenerativeAI(
-            model="gemini-1.5-pro", 
+            model="gemini-2.5-flash", 
             temperature=0.1, # Giảm thêm để tăng độ chính xác
         )
         
@@ -76,3 +71,23 @@ TRẢ LỜI:
             return chain.invoke(question)
         except Exception as e:
             return f"Đã xảy ra lỗi khi kết nối với AI: {str(e)}"
+
+    def process(self, question: str):
+        try:
+            docs = self.retriever.invoke(question)
+            chain = self.get_chain()
+            answer = chain.invoke(question)
+            
+            sources = []
+            for doc in docs:
+                sources.append({
+                    "content": doc.page_content,
+                    "source": doc.metadata.get("source", "Không rõ nguồn"),
+                    "score": 0.0
+                })
+            return {"answer": answer, "sources": sources}
+        except Exception as e:
+            return {
+                "answer": f"Đã xảy ra lỗi khi kết nối với AI: {str(e)}",
+                "sources": []
+            }

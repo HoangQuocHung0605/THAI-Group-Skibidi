@@ -1,18 +1,15 @@
 import os
-from langchain_google_genai import GoogleGenerativeAIEmbeddings
+from langchain_community.embeddings.fastembed import FastEmbedEmbeddings
 
 def get_embedding_model():
     """
-    Khởi tạo Embedding Model từ Google Gemini.
-    Đảm bảo GOOGLE_API_KEY đã có trong file .env
+    Hàm này vẫn giữ tên get_gemini_embeddings để tương thích với các file cũ,
+    nhưng thực chất bên trong đã chuyển sang dùng FastEmbed.
     """
-    api_key = os.getenv("GOOGLE_API_KEY")
-    if not api_key:
-        raise ValueError("Lỗi: Không tìm thấy GOOGLE_API_KEY. Vui lòng kiểm tra file .env")
-
-    # Sử dụng text-embedding-004 (phiên bản mới nhất, hiệu suất cao hơn 001)
-    embeddings = GoogleGenerativeAIEmbeddings(
-        model="models/text-embedding-004",
-        google_api_key=api_key
+    # Sử dụng FastEmbed (cực nhẹ, không cần tải PyTorch, vector size = 384)
+    # Tốc độ tải và tốc độ xử lý nhanh hơn rất nhiều!
+    embeddings = FastEmbedEmbeddings(
+        model_name="sentence-transformers/all-MiniLM-L6-v2",
+        cache_dir="/app/local_model_cache"
     )
     return embeddings

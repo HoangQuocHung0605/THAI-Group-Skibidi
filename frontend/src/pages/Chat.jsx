@@ -130,17 +130,21 @@ function Chat() {
               {message.sources && message.sources.length > 0 && (
                 <div className="message-sources">
                   <span>Nguon tham khao:</span>
-                  {message.sources.map((source, i) => (
-                    <a
-                      key={i}
-                      href={source}
-                      target="_blank"
-                      rel="noreferrer"
-                      className="source-link"
-                    >
-                      {source}
-                    </a>
-                  ))}
+                  {message.sources.map((source, i) => {
+                    const url = typeof source === 'object' ? source.source : source;
+                    const text = typeof source === 'object' ? (source.source ? source.source.split('/').pop() : 'Nguồn ' + (i+1)) : source;
+                    return (
+                      <a
+                        key={i}
+                        href={url}
+                        target="_blank"
+                        rel="noreferrer"
+                        className="source-link"
+                      >
+                        {text}
+                      </a>
+                    );
+                  })}
                 </div>
               )}
             </div>

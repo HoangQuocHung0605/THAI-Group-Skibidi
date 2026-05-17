@@ -1,7 +1,7 @@
 import axios from 'axios';
 
-// Lấy URL backend từ .env, mặc định localhost:8000
-const API_URL = process.env.REACT_APP_API_URL || 'http://localhost:8000';
+// Lấy URL backend từ .env, mặc định dùng cùng origin (qua nginx proxy)
+const API_URL = process.env.REACT_APP_API_URL || '';
 
 export const apiClient = axios.create({
   baseURL: `${API_URL}/api`,

@@ -13,3 +13,5 @@ qdrant-client==1.10.1
 python-dotenv==1.0.0
 celery==5.3.4
 langchain-google-genai==1.0.10
+langchain-qdrant
+fastembed==0.2.7
