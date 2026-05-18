@@ -66,6 +66,6 @@ class VectorDBManager:
             
             # Nghỉ để né hạn mức Google Free Tier
             if current_batch < total_batches:
-                time.sleep(2)
+                time.sleep(1)
         
         print("✅ Nạp dữ liệu vào Qdrant thành công!")
