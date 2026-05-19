@@ -26,7 +26,8 @@ root_path = Path(__file__).resolve().parent.parent.parent
 if str(root_path) not in sys.path:
     sys.path.append(str(root_path))
 
-from backend.ai_engine.vector_db import VectorDBManager
+#- đường dẫn trong container
+from ai_engine.vector_db import VectorDBManager
 
 class RAGChain:
     def __init__(self, db_manager=None):

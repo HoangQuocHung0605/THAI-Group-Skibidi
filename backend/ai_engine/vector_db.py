@@ -3,7 +3,7 @@ from pathlib import Path
 from qdrant_client import QdrantClient
 from qdrant_client.http.models import Distance, VectorParams
 from langchain_qdrant import QdrantVectorStore
-from backend.ai_engine.embedding import get_embedding_model
+from ai_engine.embedding import get_embedding_model
 import time
 
 class VectorDBManager:
