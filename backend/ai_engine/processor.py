@@ -81,10 +81,27 @@ class GitLabHandbookProcessor:
         return all_final_chunks
 
 if __name__ == "__main__":
-    # Sửa lại đường dẫn cho đúng cấu trúc folder của bạn
-    BASE_DIR = Path(__file__).resolve().parent # backend/ai_engine
-    DATA_DIR = BASE_DIR.parent.parent / "data" / "handbook" # Gốc / data / handbook
+    BASE_DIR = Path(__file__).resolve().parent
+    DATA_DIR = BASE_DIR.parent.parent / "data" / "handbook"
     
     processor = GitLabHandbookProcessor(str(DATA_DIR))
     final_data = processor.process_all()
-    # ... test output
+    
+    # GIẢ SỬ BẠN DÙNG db_manager ĐỂ LƯU
+    from backend.ai_engine.vector_db import VectorDBManager
+    db_manager = VectorDBManager()
+    
+    # CHIA NHỎ ĐỂ NẠP (BATCHING)
+    batch_size = 100  # Nạp mỗi lần 100 chunks để máy không đơ
+    print(f"--- BẮT ĐẦU NẠP VÀO QDRANT ({len(final_data)} chunks) ---")
+    
+    for i in range(0, len(final_data), batch_size):
+        batch = final_data[i : i + batch_size]
+        try:
+            # Đây là nơi máy sẽ chạy nặng nhất vì phải chạy Embedding Model
+            db_manager.vector_store.add_documents(batch)
+            print(f"✅ Đã nạp thành công: {i + len(batch)}/{len(final_data)}")
+        except Exception as e:
+            print(f"❌ Lỗi tại chunk {i}: {e}")
+            
+    print("✨ TẤT CẢ DỮ LIỆU ĐÃ ĐƯỢC NẠP THÀNH CÔNG!")

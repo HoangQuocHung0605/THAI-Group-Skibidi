@@ -1,18 +1,17 @@
-import os
-from langchain_google_genai import GoogleGenerativeAIEmbeddings
+from langchain_huggingface import HuggingFaceEmbeddings
 
 def get_embedding_model():
-    """
-    Khởi tạo Embedding Model từ Google Gemini.
-    Đảm bảo GOOGLE_API_KEY đã có trong file .env
-    """
-    api_key = os.getenv("GOOGLE_API_KEY")
-    if not api_key:
-        raise ValueError("Lỗi: Không tìm thấy GOOGLE_API_KEY. Vui lòng kiểm tra file .env")
-
-    # Sử dụng text-embedding-004 (phiên bản mới nhất, hiệu suất cao hơn 001)
-    embeddings = GoogleGenerativeAIEmbeddings(
-        model="models/text-embedding-004",
-        google_api_key=api_key
+    # Model đa ngôn ngữ, hỗ trợ cực tốt cho cặp Anh - Việt
+    model_name = "sentence-transformers/paraphrase-multilingual-MiniLM-L12-v2"
+    
+    # Chạy trên CPU (nếu bạn có GPU NVIDIA thì đổi thành 'cuda')
+    model_kwargs = {'device': 'cpu'}
+    encode_kwargs = {'normalize_embeddings': True} # Normalize để so sánh Cosine chính xác hơn
+    
+    print(f"[*] Đang khởi tạo Local Embedding Model: {model_name}...")
+    embeddings = HuggingFaceEmbeddings(
+        model_name=model_name,
+        model_kwargs=model_kwargs,
+        encode_kwargs=encode_kwargs
     )
     return embeddings
