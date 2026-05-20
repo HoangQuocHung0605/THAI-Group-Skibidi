@@ -38,10 +38,10 @@ function Chat() {
 
       // Lấy answer và sources từ response
       // Thử cả .answer và .message phòng backend đặt tên khác
-      const answer = response.data?.answer
-        || response.data?.message
-        || 'Không có phản hồi từ server';
+      const answer = response.data?.answer || 'Không có phản hồi từ server';
       const sources = response.data?.sources || [];
+      const sessionId = response.data?.session_id;
+      console.log('Session ID:', sessionId); // để debug
 
       // Thêm tin nhắn bot vào danh sách
       const botMessage = { role: 'bot', content: answer, sources };
@@ -117,7 +117,7 @@ function Chat() {
 
             {/* Avatar user hoặc bot */}
             <div className="message-avatar">
-              {/* icon user hoặc bot */}
+              {message.role === 'user' ? '👤' : '🦊'}
             </div>
 
             <div className="message-body">
@@ -130,17 +130,21 @@ function Chat() {
               {message.sources && message.sources.length > 0 && (
                 <div className="message-sources">
                   <span>Nguon tham khao:</span>
-                  {message.sources.map((source, i) => (
-                    <a
-                      key={i}
-                      href={source}
-                      target="_blank"
-                      rel="noreferrer"
-                      className="source-link"
-                    >
-                      {source}
-                    </a>
-                  ))}
+                  {message.sources.map((source, i) => {
+                    const url = typeof source === 'object' ? source.source : source;
+                    const text = typeof source === 'object' ? (source.source ? source.source.split('/').pop() : 'Nguồn ' + (i+1)) : source;
+                    return (
+                      <a
+                        key={i}
+                        href={url}
+                        target="_blank"
+                        rel="noreferrer"
+                        className="source-link"
+                      >
+                        {text}
+                      </a>
+                    );
+                  })}
                 </div>
               )}
             </div>
@@ -152,7 +156,7 @@ function Chat() {
         {loading && (
           <div className="message bot">
             <div className="message-avatar">
-              {/* icon bot */}
+              🦊
             </div>
             <div className="message-body">
               {/* 3 chấm nhảy */}
@@ -189,7 +193,10 @@ function Chat() {
           // Disable khi đang loading hoặc input trống
           disabled={loading || !input.trim()}
         >
-           <span style={{ fontSize: '32px', lineHeight: 1 }}>⬆</span>
+          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+            <line x1="22" y1="2" x2="11" y2="13"></line>
+            <polygon points="22 2 15 22 11 13 2 9 22 2"></polygon>
+          </svg>
         </button>
 
       </div>

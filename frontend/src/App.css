@@ -763,3 +763,109 @@ body {
   background: #e8e8f0;
   color: #111111;
 }
+/* ===== LIGHT MODE BỔ SUNG ===== */
+
+/* Nền tổng thể */
+.app.light {
+  background: #f5f5f5;
+  color: #111111;
+}
+
+/* Main content */
+.app.light .main-content {
+  background: #f5f5f5;
+}
+
+/* Chat container */
+.app.light .chat-container {
+  background: #f5f5f5;
+}
+
+/* Chat header */
+.app.light .chat-header {
+  border-bottom: 1px solid #e0e0e0;
+}
+
+.app.light .chat-header h2 {
+  color: #111111;
+}
+
+.app.light .chat-header p {
+  color: #666666;
+}
+
+/* Chat input area */
+.app.light .chat-input-area {
+  border-top: 1px solid #e0e0e0;
+}
+
+/* Chữ gợi ý */
+.app.light .chat-empty {
+  color: #444444;
+}
+
+.app.light .chat-empty h1 {
+  color: #111111;
+  -webkit-text-stroke: 2px #111111;
+  text-shadow: 2px 2px 0px #111111;
+}
+
+.app.light .chat-empty p {
+  color: #555555;
+}
+
+/* Dashboard */
+.app.light .dashboard-container {
+  background: #f5f5f5;
+}
+
+.app.light .dashboard-header h2 {
+  color: #111111;
+}
+
+.app.light .dashboard-header p {
+  color: #666666;
+}
+
+/* Card */
+.app.light .card {
+  background: #ffffff;
+  border: 1px solid #e0e0e0;
+}
+
+.app.light .card h3 {
+  color: #111111;
+}
+
+.app.light .card > p {
+  color: #666666;
+}
+
+/* Status rows */
+.app.light .status-row {
+  border-bottom: 1px solid #e0e0e0;
+}
+
+.app.light .status-label {
+  color: #666666;
+}
+
+.app.light .status-value {
+  color: #111111;
+}
+
+/* Refresh button */
+.app.light .refresh-btn {
+  border-color: #e0e0e0;
+  color: #666666;
+}
+
+/* Nav links */
+.app.light .nav-link {
+  color: #555555;
+}
+
+.app.light .nav-link:hover {
+  background: #e0e0e0;
+  color: #111111;
+}
